@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title><%= title %></title>
+        <link rel='stylesheet' href='/stylesheets/style.css'/>
+        <script src="/javascripts/framework/loader.js"></script>
+        <script>
+            require([
+                '/javascripts/network/RPC',
+                '/javascripts/framework/utils',
+                '/javascripts/framework/DOM',
+                '/javascripts/logic/block',
+                '/javascripts/geometry',
+                '/javascripts/renderer',
+                '/javascripts/engine'
+            ]);
+        </script>
+    </head>
+    <body>
+        <section id="preloader">
+            <section class="cssload-thecube">
+                <section class="cssload-cube cssload-c1"></section>
+                <section class="cssload-cube cssload-c2"></section>
+                <section class="cssload-cube cssload-c4"></section>
+                <section class="cssload-cube cssload-c3"></section>
+            </section>
+        </section>
+        <section class="tooltip-text"></section>
+        <section id="schemaSelector" style="display: none">
+        </section>
+        <section class="modal-background" id="modal" style="display: none">
+            <section class="modal">
+                <section class="modal-header">
+                    <button id="modalСlose">Закрыть</button>
+                </section>
+                <section class="modal-content">
+                    <section id="modalContentPay" class="modal-content-in" style="display: none">
+                        <label for="payId">ID товара</label>
+                        <input id="payId" type="text"/>
+                        <a onclick="document.getElementById('payId').value = randString();">Случайный</a><br/>
+                        <label for="payValue">Сумма</label>
+                        <input id="payValue" type="number"/>
+                        <br/>
+                    </section>
+                    <section id="modalContentTextInput" class="modal-content-in" style="display: none">
+                        <label for="varName">Имя переменной</label>
+                        <input id="varName" type="text"/>
+                    </section>
+                    <section id="modalContentEmail" class="modal-content-in" style="display: none">
+                        <label for="emailSubject">Тема письма</label>
+                        <input id="emailSubject" type="text"/><br/>
+                        <label for="emailAddress">Получатель</label>
+                        <input id="emailAddress" type="text"/>
+                    </section>
+                    <section id="modalContentMath" class="modal-content-in" style="display: none">                     
+                        <label for="mathName">Имя переменной</label>
+                        <input id="mathName" type="text"/><br/>
+                        <label for="mathOperation">Операция</label>
+                        <select id="mathOperation">
+                            <option selected value="=">= (присвоить)</option>
+                            <option value="+">+ (прибавить)</option>
+                            <option value="-">- (отнять)</option>
+                            <option value="*">* (умножить)</option>
+                            <option value="/">/ (разделить)</option>
+                        </select><br/>
+                        <label for="mathValue">Значение</label>
+                        <input id="mathValue" type="number"/>
+                    </section>
+                    <section id="modalContentTrigger" class="modal-content-in" style="display: none">                     
+                        <label for="triggerName">Имя переменной</label>
+                        <input id="triggerName" type="text"/><br/>
+                        <label for="triggerEvent">Операция</label>
+                        <select id="triggerEvent">
+                            <option selected value="==">== (равно)</option>
+                            <option value="<="><= (меньше либо равно)</option>
+                            <option value="<">< (меньше)</option>
+                            <option value="!=">!= (не равно)</option>
+                            <option value=">=">>= (больше либо равно)</option>
+                            <option value=">">> (больше)</option>
+                        </select><br/>
+                        <label for="triggerValue">Значение</label>
+                        <input id="triggerValue" type="number"/>
+                    </section>
+                    <br/>
+                    <label id="messageLabel" for="messageText">Текст сообщения</label>
+                    <textarea style="margin-bottom: 10px" rows="20" id="messageText" placeholder="Текст сообщения"></textarea>
+                    <label id="imageLabel" for="messageImage">Картинка</label>
+                    <input id="messageImage" type="file"/>
+                    <input id="messageImageUrl" type="hidden"/>
+                    <img id="messageImagePreview" width="100" height="100"/>
+                    <br/>
+                    <label id="delayLabel" for="delayValue">Отложить на </label>
+                    <input id="delayValue" type="number" value="0"/> секунд
+                </section>
+                <section class="modal-footer">
+                    <button id="modalSave">Сохранить</button>
+                    <button id="modalDelete">Удалить</button>
+                </section>
+            </section>
+        </section>
+        <header>
+            <nav>
+                <button onclick="menuClick(event, 'new');">Новый</button>
+                <button onclick="menuClick(event, 'open');">Открыть</button>
+            </nav>
+        </header>
+        <section class="content">
+            <section class="left">
+                <section class="tool-item" draggable="true" id="start" data-tool="start" style="background-color: #3e236d">
+                    Старт
+                </section>
+                <section class="tool-item" draggable="true" id="text" data-tool="text" style="background-color: #c96">
+                    Сообщение
+                </section>
+                <section class="tool-item" draggable="true" id="question" data-tool="question" style="background-color: #096">
+                    Вопрос
+                </section>
+                <section class="tool-item" draggable="true" id="answer" data-tool="answer" style="background-color: #06c">
+                    Ответ
+                </section>
+                <section class="tool-item" draggable="true" id="final" data-tool="final" style="background-color: #906">
+                    Финал
+                </section>
+                <section class="tool-item" draggable="true" id="pay" data-tool="pay" style="background-color: #c60">
+                    Оплата
+                </section>
+                <section class="tool-item" draggable="true" id="textinput" data-tool="textinput" style="background-color: #0aa">
+                    Ввод
+                </section>
+                <section class="tool-item" draggable="true" id="sendmail" data-tool="sendmail" style="background-color: #f30">
+                    Почта
+                </section>
+                <section class="tool-item" draggable="true" id="math" data-tool="math" style="background-color: #990">
+                    Арифметика
+                </section>
+                <section class="tool-item" draggable="true" id="condition" data-tool="condition" style="background-color: #f90">
+                    Условие
+                </section>
+            </section>
+            <section class="right">
+                <svg id="board" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+                </svg>
+            </section>
+        </section>
+    </body>
+</html>

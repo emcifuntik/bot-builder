@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('parts/head'); %>
+<body class="app header-fixed sidebar-fixed aside-menu-fixed aside-menu-hidden">
+    <%- include('parts/header'); %>
+    <div class="app-body">
+        <%- include('parts/sidebar'); %>
+        <main class="main">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">Главная</li>
+                <li class="breadcrumb-item"><a href="#">Администратор</a>
+                </li>
+                <li class="breadcrumb-item active">Боты</li>
+
+                <li class="breadcrumb-menu d-md-down-none">
+                    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                        <a class="btn btn-secondary" href="/bot/new"><i class="icon-plus"></i> &nbsp;Добавить бота</a>
+                    </div>
+                </li>
+            </ol>
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fa fa-align-justify"></i> Ваши боты
+                            </div>
+                            <div class="card-block">
+                                <table class="table table-bordered table-striped table-condensed">
+                                    <thead>
+                                    <tr>
+                                        <th>Имя</th>
+                                        <th>Дата создания</th>
+                                        <th>Дата обновления</th>
+                                        <th>Статус</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <% for(let bot of bots) { %>
+                                        <tr>
+                                            <td><%= bot.name %></td>
+                                            <td><%= bot.created.toLocaleDateString('en-EN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) + ', ' + bot.created.toLocaleTimeString('ru-RU') %></td>
+                                            <td><%= bot.updated.toLocaleDateString('en-EN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) + ', ' + bot.updated.toLocaleTimeString('ru-RU') %></td>
+                                            <td>
+                                                <% if(bot.enabled) { %>
+                                                <span class="tag tag-success">Активный</span>
+                                                <% } else {%>
+                                                <span class="tag tag-default">Неактивный</span>
+                                                <% } %>
+                                                <% if(started[bot._id]) { %>
+                                                <span class="tag tag-success">, Запущен</span>
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <a href="/bot/edit/<%= bot._id %>"><button type="button" class="btn btn-outline-warning">Редактировать</button></a>
+                                                <a href="/bot/delete/<%= bot._id %>"><button type="button" class="btn btn-outline-danger">Удалить</button></a>
+                                                <% if(started[bot._id]) { %>
+                                                <a href="/bot/stop/<%= bot._id %>"><button type="button" class="btn btn-outline-info">Остановить</button></a>
+                                                <% } else { %>
+                                                <a href="/bot/start/<%= bot._id %>"><button type="button" class="btn btn-outline-info">Запустить</button></a>
+                                                <% } %>
+                                            </td>
+                                        </tr>
+                                    <% } %>
+                                    </tbody>
+                                </table>
+                                <!--<nav>
+                                    <ul class="pagination">
+                                        <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+                                        <li class="page-item active">
+                                            <a class="page-link" href="#">1</a>
+                                        </li>
+                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">4</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                                    </ul>
+                                </nav>-->
+                            </div>
+                        </div>
+                    </div>
+                    <!--/col-->
+                </div>
+            </div>
+        </main>
+    </div>
+    <%- include('parts/footer'); %>
+    <%- include('parts/scripts'); %>
+</body>
+</html>

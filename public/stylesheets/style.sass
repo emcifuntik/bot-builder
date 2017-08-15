@@ -1,0 +1,210 @@
+$leftSideColor: #506D2F
+$rightSideColor: #3d562a
+$headerColor: #7D5642
+$toolColor: #2A2922
+$activeToolColor: #3A3932
+$textColor: #F3EBDD
+
+@import url('https://fonts.googleapis.com/css?family=Comfortaa|Nixie+One|Poiret+One|Satisfy')
+
+html, body
+  padding: 0
+  margin: 0
+  height: 100%
+  width: 100%
+
+body
+  display: flex
+  flex-direction: column
+
+a
+  color: #00B7FF
+
+section, header, footer, nav, aside
+  display: flex
+
+header
+  background: $headerColor
+  height: 40px
+
+svg
+  display: flex
+  flex: 1 1
+  -webkit-user-select: none
+  -moz-user-select: none
+  -ms-user-select: none
+  user-select: none
+  cursor: pointer
+
+section.content
+  flex-direction: row
+  flex: 1 1
+
+section.left
+  background: $leftSideColor
+  width: 200px
+  flex-direction: column
+
+section.tool-item
+  background: $toolColor
+  color: $textColor
+  height: 50px
+  margin: 5px
+  font-family: 'Poiret One', cursive
+  font-weight: bold
+  align-items: center
+  justify-content: center
+  -webkit-user-select: none
+  -moz-user-select: none
+  -ms-user-select: none
+  user-select: none
+  cursor: move
+
+section.right
+  background: $rightSideColor
+  flex: 4 1
+
+rect.startRect
+  fill: $toolColor
+  width: 190px
+  height: 50px
+  -webkit-user-select: none
+  -moz-user-select: none
+  -ms-user-select: none
+
+rect.rectActive
+  fill: $activeToolColor
+  width: 190px
+  height: 50px
+  -webkit-user-select: none
+  -moz-user-select: none
+  -ms-user-select: none
+
+text.startText
+  font-family: 'Poiret One', cursive
+  font-size: 16px
+  font-weight: bold
+  fill: $textColor
+
+label, a
+  font-family: 'Poiret One', cursive
+  font-weight: bold
+
+a
+  cursor: pointer
+  -webkit-user-select: none
+  -moz-user-select: none
+  -ms-user-select: none
+  user-select: none
+
+section.modal-background
+  background: rgba(0,0,0,0.9)
+  position: fixed
+  flex: 1 1
+  height: 100%
+  width: 100%
+  align-items: center
+  justify-content: center
+
+section.modal
+  width: 500px
+  min-height: 300px
+  background: #fefffe
+  box-shadow: rgba(255, 255, 255, 0.32) 0 0 20px 0
+  -webkit-border-radius: 10px
+  -moz-border-radius: 10px
+  border-radius: 10px
+  flex-direction: column
+
+section.modal-header
+  height: 30px
+  flex-direction: row-reverse
+
+section.modal-content
+  flex: 1 1
+  flex-direction: column
+  padding: 10px
+
+section.modal-content-in
+  flex: 1 1
+  flex-direction: column
+
+section.modal-footer
+  height: 30px
+  flex-direction: row-reverse
+
+section>button
+  font-family: 'Poiret One', cursive
+  transition-duration: 0.4s
+  text-decoration: none
+  cursor: pointer
+  border-radius: 3px
+  background-color: white
+  color: black
+  border: 1px solid #f44336
+  display: block
+  font-weight: bold
+  background: #ffffff
+  margin: 5px
+  box-shadow: rgba(0, 0, 0, 0.5) 2px 2px 5px 0
+  -webkit-user-select: none
+  -moz-user-select: none
+  -ms-user-select: none
+  user-select: none
+
+section>button:hover
+  background: #f44336
+
+section>button:focus
+    outline: none
+
+section>button:active
+  box-shadow: none
+  margin-top: 6px
+
+nav>button
+  font-family: 'Poiret One', cursive
+  transition-duration: 0.2s
+  text-decoration: none
+  cursor: pointer
+  background-color: #644535
+  color: #f3ebdd
+  border: none
+  display: block
+  font-weight: bold
+  box-shadow: rgba(0, 0, 0, 0.5) 2px 2px 5px 0
+  -webkit-user-select: none
+  -moz-user-select: none
+  -ms-user-select: none
+  user-select: none
+  padding: 0 20px 0 20px
+
+nav>button:hover
+  background: #45322b
+
+nav>button:focus
+  outline: none
+
+nav>button:active
+  margin-top: 3px
+  margin-bottom: 3px
+
+section.tooltip-text
+  font-family: 'Poiret One', cursive
+  display: none
+  max-width: 400px
+  background-color: rgba(0, 0, 0, 0.5)
+  color: #fff
+  justify-content: center
+  align-items: center
+  border-radius: 6px
+  position: fixed
+  z-index: 1
+  padding: 5px
+  -webkit-user-select: none
+  -moz-user-select: none
+  -ms-user-select: none
+  user-select: none
+  -webkit-box-shadow: 0 0 5px rgba(255, 255, 255, 0.1)
+  -moz-box-shadow: 0 0 5px rgba(255, 255, 255, 0.1)
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.1)

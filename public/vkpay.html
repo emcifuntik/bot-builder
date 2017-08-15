@@ -1,0 +1,35 @@
+<html>
+    <head>
+        <script src="https://vk.com/js/api/xd_connection.js?2"  type="text/javascript"></script>
+        <script type="text/javascript"> 
+            VK.init(function() {
+                VK.addCallback('onOrderSuccess', function(order_id) {
+                    document.body.innerHTML += '<br />Платёж успешно завершён. Его номер = '+order_id;
+                });
+                VK.addCallback('onOrderFail', function() {
+                    document.body.innerHTML += '<br />Ошибка платежа';
+                });
+                VK.addCallback('onOrderCancel', function() {
+                    document.body.innerHTML += '<br />Платёж отменён';
+                });
+
+                var url = (window.location != window.parent.location)
+                    ? document.referrer
+                    : document.location.href;
+                var parts = url.split('?');
+                var item = parts[1];
+                var params = { 
+                    type: 'item', 
+                    item: item,
+                    currency: true
+                }; 
+                VK.callMethod('showOrderBox', params); 
+            }, function() { 
+                window.location.reload();
+            }, '5.64'); 
+        </script>
+    </head>
+    <body>
+
+    </body>
+</html>

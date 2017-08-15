@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('parts/head'); %>
+<body class="app header-fixed sidebar-fixed aside-menu-fixed aside-menu-hidden">
+    <%- include('parts/header'); %>
+    <div class="app-body">
+        <%- include('parts/sidebar'); %>
+        <main class="main">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">Главная</li>
+                <li class="breadcrumb-item"><a href="#">Администратор</a></li>
+                <li class="breadcrumb-item"><a href="/bot">Боты</a></li>
+                <li class="breadcrumb-item active">Редактирование</li>
+            </ol>
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <form action="" method="post" class="form-horizontal ">
+                                <div class="card-header">
+                                    <strong>Редактирование</strong> бота
+                                </div>
+                                <div class="card-block">
+                                    <p class="text-danger"><%= error %></p>
+                                    <div class="form-group row">
+                                        <label class="col-md-3 form-control-label" for="text-input">Имя</label>
+                                        <div class="col-md-9">
+                                            <input type="text" id="text-input" name="botName" class="form-control" placeholder="Бот-квест" value="<%- bot.name %>">
+                                            <span class="help-block">Впишите сюда имя, чтобы различать ботов в списке</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-md-3 form-control-label" for="select">Схема бота</label>
+                                        <div class="col-md-9">
+                                            <select id="select" name="graph" class="form-control" size="1">
+                                                <option disabled>Сделайте выбор</option>
+                                                <% for(let g of graphs) { %>
+                                                    <option <% if(bot.graph.toString() === g._id.toString()) { %>selected<% } %> value="<%= g._id %>"><%= g.name %></option>
+                                                <% } %>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-md-3 form-control-label" for="text-input">
+                                            <label class="switch switch-3d switch-success">
+                                                <input type="checkbox" name="vkActive" class="switch-input" <% if(bot.vkActive) { %>checked<% } else { %>unchecked<% } %>>
+                                                <span class="switch-label"></span>
+                                                <span class="switch-handle"></span>
+                                            </label> VK
+                                        </label>
+                                        <div class="col-md-9">
+                                            <input type="text" id="text-input" name="vkToken" class="form-control" value="<%- bot.vkToken %>">
+                                            <span class="help-block">Вставьте сюда токен, полученный на странице настройки вашей группы ВК</span>
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-md-3 form-control-label" for="text-input"><label class="switch switch-3d switch-success">
+                                                <input type="checkbox" name="telegramActive" class="switch-input" <% if(bot.telegramActive) { %>checked<% } else { %>unchecked<% } %>>
+                                                <span class="switch-label"></span>
+                                                <span class="switch-handle"></span>
+                                            </label> Telegram
+                                        </label>
+                                        <div class="col-md-9">
+                                            <input type="text" id="text-input" name="telegramToken" class="form-control" value="<%- bot.telegramToken %>">
+                                            <span class="help-block">Вставьте сюда токен, полученный от <a href="//t.me/botfather">бота</a></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-md-3 form-control-label" for="text-input">Telegram payment token
+                                        </label>
+                                        <div class="col-md-9">
+                                            <input type="text" id="text-input" name="telegramProviderToken" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-md-3 form-control-label" for="text-input"><label class="switch switch-3d switch-success">
+                                                <input type="checkbox" name="viberActive" class="switch-input" <% if(bot.viberActive) { %>checked<% } else { %>unchecked<% } %>>
+                                                <span class="switch-label"></span>
+                                                <span class="switch-handle"></span>
+                                            </label> Viber
+                                        </label>
+                                        <div class="col-md-9">
+                                            <input type="text" id="text-input" name="viberToken" class="form-control" value="<%- bot.viberToken %>">
+                                            <span class="help-block"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-md-3 form-control-label" for="text-input"><label class="switch switch-3d switch-success">
+                                                <input type="checkbox" name="messengerActive" class="switch-input" <% if(bot.messengerActive) { %>checked<% } else { %>unchecked<% } %>>
+                                                <span class="switch-label"></span>
+                                                <span class="switch-handle"></span>
+                                            </label> Messenger
+                                        </label>
+                                        <div class="col-md-9">
+                                            <input type="text" id="text-input" name="messengerToken" class="form-control" value="<%- bot.messengerToken %>">
+                                            <span class="help-block"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-md-3 form-control-label" for="text-input"><label class="switch switch-3d switch-success">
+                                                <input type="checkbox" name="whatsupActive" class="switch-input" <% if(bot.whatsupActive) { %>checked<% } else { %>unchecked<% } %>>
+                                                <span class="switch-label"></span>
+                                                <span class="switch-handle"></span>
+                                            </label> WhatsUp
+                                        </label>
+                                        <div class="col-md-9">
+                                            <input type="text" id="text-input" name="whatsupToken" class="form-control" value="<%- bot.whatsupToken %>">
+                                            <span class="help-block"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-dot-circle-o"></i> Сохранить</button>
+                                    <button type="reset" class="btn btn-sm btn-danger"><i class="fa fa-ban"></i> Сбросить</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <%- include('parts/footer'); %>
+    <%- include('parts/scripts'); %>
+</body>
+</html>

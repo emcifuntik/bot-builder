@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('parts/head'); %>
+<body class="app header-fixed sidebar-fixed aside-menu-fixed aside-menu-hidden">
+    <%- include('parts/header'); %>
+    <div class="app-body">
+        <%- include('parts/sidebar'); %>
+        <main class="main">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">Главная</li>
+                <li class="breadcrumb-item"><a href="#">Администратор</a>
+                </li>
+                <li class="breadcrumb-item active">Управление</li>
+
+                <li class="breadcrumb-menu d-md-down-none">
+                    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                        <a class="btn btn-secondary" href="/bot/new"><i class="icon-plus"></i> &nbsp;Добавить бота</a>
+                    </div>
+                </li>
+            </ol>
+
+            <div class="container-fluid">
+            </div>
+        </main>
+    </div>
+    <%- include('parts/footer'); %>
+    <%- include('parts/scripts'); %>
+</body>
+</html>
