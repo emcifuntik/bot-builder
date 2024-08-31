@@ -1,16 +1,30 @@
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/botbuilder');
+
+// Connection URI
+const mongoURI = 'mongodb://localhost:27017/botbuilder';
+
+// Connect to MongoDB
+mongoose.connect(mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
+.then(() => {
+    console.log('Connected to MongoDB');
+})
+.catch((err) => {
+    console.error('Error connecting to MongoDB:', err.message);
+});
 
 module.exports = {
-    account: require('./models/account')(mongoose),
-    bot: require('./models/bot')(mongoose),
-    botSchema: require('./models/botSchema')(mongoose),
-    userProgress: require('./models/userProgress')(mongoose),
-    payment: require('./models/payment')(mongoose),
-    docCache: require('./models/docCache')(mongoose),
-    telegramCache: require('./models/telegramCache')(mongoose),
-    user: require('./models/user')(mongoose),
-    block: require('./models/block')(mongoose),
-    variable: require('./models/variable')(mongoose),
+    account: require('./models/account'),
+    bot: require('./models/bot'),
+    botSchema: require('./models/botSchema'),
+    userProgress: require('./models/userProgress'),
+    payment: require('./models/payment'),
+    docCache: require('./models/docCache'),
+    telegramCache: require('./models/telegramCache'),
+    user: require('./models/user'),
+    block: require('./models/block'),
+    variable: require('./models/variable'),
     mongoose: mongoose
 };

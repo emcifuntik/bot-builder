@@ -1,16 +1,19 @@
-module.exports = (mongoose) => {
-    return mongoose.model('TelegramCache', new mongoose.Schema({
-        hash: {
-            type: String,
-            required: true
-        },
-        bot: {
-            type: mongoose.Schema.Types.ObjectId,
-            required: true
-        },
-        fileId: {
-            type: String,
-            required: true
-        }
-    }));
-};
+const mongoose = require('mongoose');
+
+const telegramCacheSchema = new mongoose.Schema({
+  hash: {
+    type: String,
+    required: true
+  },
+  bot: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'Bot'
+  },
+  fileId: {
+    type: String,
+    required: true
+  }
+});
+
+module.exports = mongoose.model('TelegramCache', telegramCacheSchema);

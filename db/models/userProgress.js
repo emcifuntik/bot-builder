@@ -1,53 +1,42 @@
-module.exports = (mongoose) => {
-    let userProgress = new mongoose.Schema({
-        name: {
-            type: String,
-            required: true
-        },
-        bot: {
-            type: mongoose.Schema.Types.ObjectId,
-            required: true
-        },
-        progress: {
-            type: String,
-            default: null
-        }
-    });
+const mongoose = require('mongoose');
 
-    let model = mongoose.model('UserProgress', userProgress);
-    model.getProgress = (user, bot, cb) => {
-        return model.findOne({
-            name: user,
-            bot: bot
-        }, (err, progress) => {
+const userProgressSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true
+  },
+  bot: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'Bot'
+  },
+  progress: {
+    type: String,
+    default: null
+  }
+});
 
-            if(progress)
-                cb(progress.progress);
-            else
-                cb(null);
-        });
-    };
-
-    model.saveProgress = (user, bot, progress, cb) => {
-        return model.findOne({
-            name: user,
-            bot: bot
-        }, (err, _progress) => {
-            if(_progress) {
-                _progress.progress = progress;
-                _progress.save();
-                cb(null);
-            }
-            else
-                model.create({
-                    name: user,
-                    bot: bot,
-                    progress: progress
-                }, (err, p) => {
-                    if(err)
-                        cb(err);
-                });
-        })
-    };
-    return model;
+userProgressSchema.statics.getProgress = async function (user, bot) {
+  try {
+    const progress = await this.findOne({ name: user, bot: bot });
+    return progress ? progress.progress : null;
+  } catch (err) {
+    throw err;
+  }
 };
+
+userProgressSchema.statics.saveProgress = async function (user, bot, progress) {
+  try {
+    let userProgress = await this.findOne({ name: user, bot: bot });
+    if (userProgress) {
+      userProgress.progress = progress;
+      await userProgress.save();
+    } else {
+      userProgress = await this.create({ name: user, bot: bot, progress: progress });
+    }
+  } catch (err) {
+    throw err;
+  }
+};
+
+module.exports = mongoose.model('UserProgress', userProgressSchema);

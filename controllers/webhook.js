@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const Messenger = require('../executor/platforms/messenger');
 
-router.all('/messenger', Messenger.callback);
+// Route to handle all HTTP methods for the '/messenger' endpoint
+router.route('/messenger')
+  .all(Messenger.callback);
 
 module.exports = router;

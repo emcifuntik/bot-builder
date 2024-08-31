@@ -3,149 +3,152 @@ const router = express.Router();
 const db = require('../db');
 const executor = require('../executor');
 
-router.get('/', (req, res, next) => {
-    if(!req.user)
-        return res.redirect('/login');
-    db.bot.find((err, bots) => {
-        let started = {};
-        for(let i in bots)
-            if (bots.hasOwnProperty(i))
-                started[bots[i]._id] = executor.isStarted(bots[i]._id);
-        res.render('bots', { title: 'Bot Editor', user: req.user, bots: bots, started: started });
+// Middleware to check if the user is authenticated
+function ensureAuthenticated(req, res, next) {
+  if (!req.user) {
+    return res.redirect('/login');
+  }
+  next();
+}
+
+// GET bots page
+router.get('/', ensureAuthenticated, async (req, res) => {
+  try {
+    const bots = await db.bot.find();
+    const started = {};
+
+    bots.forEach(bot => {
+      started[bot._id] = executor.isStarted(bot._id);
     });
+
+    res.render('bots', { title: 'Bot Editor', user: req.user, bots, started });
+  } catch (err) {
+    console.error(err);
+    res.status(500).render('error', { code: 500 });
+  }
 });
 
-router.get('/new', (req, res, next) => {
-    if(!req.user)
-        return res.redirect('/login');
-    db.botSchema.find((err, graphs) => {
-        res.render('newBot', {
-            title: 'Bot Editor',
-            user: req.user,
-            graphs: graphs,
-            error: null
-        });
+// GET new bot page
+router.get('/new', ensureAuthenticated, async (req, res) => {
+  try {
+    const graphs = await db.botSchema.find();
+    res.render('newBot', { title: 'Bot Editor', user: req.user, graphs, error: null });
+  } catch (err) {
+    console.error(err);
+    res.status(500).render('error', { code: 500 });
+  }
+});
+
+// GET edit bot page
+router.get('/edit/:id', ensureAuthenticated, async (req, res) => {
+  try {
+    const bot = await db.bot.findById(req.params.id);
+    if (!bot) {
+      return res.status(404).render('error', { code: 404 });
+    }
+
+    const graphs = await db.botSchema.find();
+    res.render('editBot', { title: 'Bot Editor', user: req.user, graphs, error: null, bot });
+  } catch (err) {
+    console.error(err);
+    res.status(500).render('error', { code: 500 });
+  }
+});
+
+// POST edit bot
+router.post('/edit/:id', ensureAuthenticated, async (req, res) => {
+  try {
+    const bot = await db.bot.findById(req.params.id);
+    if (!bot) {
+      return res.status(404).render('error', { code: 404 });
+    }
+
+    bot.name = req.body.botName;
+    bot.graph = req.body.graph;
+    bot.vkActive = req.body.vkActive === 'on';
+    bot.vkToken = req.body.vkToken;
+    bot.telegramActive = req.body.telegramActive === 'on';
+    bot.telegramToken = req.body.telegramToken;
+    bot.telegramProviderToken = req.body.telegramProviderToken;
+    bot.viberActive = req.body.viberActive === 'on';
+    bot.viberToken = req.body.viberToken;
+    bot.messengerActive = req.body.messengerActive === 'on';
+    bot.messengerToken = req.body.messengerToken;
+    bot.whatsupActive = req.body.whatsupActive === 'on';
+    bot.whatsupToken = req.body.whatsupToken;
+
+    await bot.save();
+
+    executor.stopBot(bot._id);
+    executor.startBot(bot._id);
+
+    res.redirect('/bot');
+  } catch (err) {
+    console.error(err);
+    res.status(500).render('error', { code: 500 });
+  }
+});
+
+// GET stop bot
+router.get('/stop/:id', ensureAuthenticated, (req, res) => {
+  executor.stopBot(req.params.id);
+  res.redirect('back');
+});
+
+// GET start bot
+router.get('/start/:id', ensureAuthenticated, (req, res) => {
+  executor.startBot(req.params.id);
+  res.redirect('back');
+});
+
+// POST new bot
+router.post('/new', ensureAuthenticated, async (req, res) => {
+  const { botName, graph, vkActive, vkToken, telegramActive, telegramToken, telegramProviderToken, viberActive, viberToken, messengerActive, messengerToken, whatsupActive, whatsupToken } = req.body;
+
+  if (!botName || !graph) {
+    const graphs = await db.botSchema.find();
+    return res.render('newBot', {
+      title: 'Bot Editor',
+      user: req.user,
+      graphs,
+      error: 'Не все поля заполнены'
     });
-});
+  }
 
-router.get('/edit/:id', (req, res, next) => {
-    if(!req.user)
-        return res.redirect('/login');
-    if(req.params.id)
-    {
-        db.bot.findOne({_id: req.params.id}, (err, oldBot) => {
-            if(oldBot)
-            {
-                db.botSchema.find((err, graphs) => {
-                    res.render('editBot', {
-                        title: 'Bot Editor',
-                        user: req.user,
-                        graphs: graphs,
-                        error: null,
-                        bot: oldBot
-                    });
-                });
-            }
-            else
-                res.render('error', {code: 404});
-        });
+  try {
+    const existingBot = await db.bot.findOne({ name: botName });
+    if (existingBot) {
+      const graphs = await db.botSchema.find();
+      return res.render('newBot', {
+        title: 'Bot Editor',
+        user: req.user,
+        graphs,
+        error: 'Бот с таким именем уже существует'
+      });
     }
-});
 
-router.post('/edit/:id', (req, res, next) => {
-    if(!req.user)
-        return res.redirect('/login');
-    if(req.params.id)
-    {
-        db.bot.findOne({_id: req.params.id}, (err, oldBot) => {
-            oldBot.name = req.body.botName;
-            oldBot.graph = req.body.graph;
-            oldBot.vkActive = req.body.vkActive === 'on';
-            oldBot.vkToken = req.body.vkToken;
-            oldBot.telegramActive = req.body.telegramActive === 'on';
-            oldBot.telegramToken = req.body.telegramToken;
-            oldBot.telegramProviderToken = req.body.telegramProviderToken;
-            oldBot.viberActive = req.body.viberActive === 'on';
-            oldBot.viberToken = req.body.viberToken;
-            oldBot.messengerActive = req.body.messengerActive === 'on';
-            oldBot.messengerToken = req.body.messengerToken;
-            oldBot.whatsupActive = req.body.whatsupActive === 'on';
-            oldBot.whatsupToken = req.body.whatsupToken;
-            oldBot.save();
-            executor.stopBot(oldBot._id);
-            executor.startBot(oldBot._id);
-            res.redirect('/bot');
-        });
-    }
-});
+    const bot = await db.bot.create({
+      name: botName,
+      graph,
+      vkActive: vkActive === 'on',
+      vkToken,
+      telegramActive: telegramActive === 'on',
+      telegramToken,
+      telegramProviderToken,
+      viberActive: viberActive === 'on',
+      viberToken,
+      messengerActive: messengerActive === 'on',
+      messengerToken,
+      whatsupActive: whatsupActive === 'on',
+      whatsupToken
+    });
 
-router.get('/stop/:id', (req, res, next) => {
-    if(!req.user)
-        return res.redirect('/login');
-    executor.stopBot(req.params.id);
-    res.redirect('back');
-});
-
-router.get('/start/:id', (req, res, next) => {
-    if(!req.user)
-        return res.redirect('/login');
-    executor.startBot(req.params.id);
-    res.redirect('back');
-});
-
-
-router.post('/new', (req, res, next) => {
-    if(!req.user)
-        return res.redirect('/login');
-    if(req.body.botName && req.body.graph)
-    {
-        db.bot.findOne({name: req.body.botName}, (err, bot) => {
-            if(!bot) {
-                db.bot.create({
-                    name: req.body.botName,
-                    graph: req.body.graph,
-                    vkActive: req.body.vkActive === 'on',
-                    vkToken: req.body.vkToken,
-                    telegramActive: req.body.telegramActive === 'on',
-                    telegramToken: req.body.telegramToken,
-                    telegramProviderToken: req.body.telegramProviderToken,
-                    viberActive: req.body.viberActive === 'on',
-                    viberToken: req.body.viberToken,
-                    messengerActive: req.body.messengerActive === 'on',
-                    messengerToken: req.body.messengerToken,
-                    whatsupActive: req.body.whatsupActive === 'on',
-                    whatsupToken: req.body.whatsupToken
-                }, (err, bot) => {
-                    if(err)
-                        console.error(err);
-                    else
-                        executor.startBot(bot._id);
-                    console.log(bot);
-                });
-                res.redirect('/bot');
-            }
-            else {
-                db.botSchema.find((err, graphs) => {
-                    res.render('newBot', {
-                        title: 'Bot Editor',
-                        user: req.user,
-                        graphs: graphs,
-                        error: 'Бот с таким именем уже существует'
-                    });
-                });
-            }
-        });
-    }
-    else {
-        db.botSchema.find((err, graphs) => {
-            res.render('newBot', {
-                title: 'Bot Editor',
-                user: req.user,
-                graphs: graphs,
-                error: 'Не все поля заполнены'
-            });
-        });
-    }
+    executor.startBot(bot._id);
+    res.redirect('/bot');
+  } catch (err) {
+    console.error(err);
+    res.status(500).render('error', { code: 500 });
+  }
 });
 
 module.exports = router;
